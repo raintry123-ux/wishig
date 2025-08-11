@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Months Together - Special Gift</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            color: #fff;
+            position: relative;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .countdown-container {
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 40px 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .countdown-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+        }
+        
+        .countdown-text {
+            font-size: 6rem;
+            font-weight: 800;
+            margin: 20px 0;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+            animation: pulse 1s infinite alternate;
+        }
+        
+        .countdown-subtitle {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            opacity: 0.9;
+        }
+        
+        .gift-container {
+            perspective: 1000px;
+            margin: 40px auto;
+            width: 250px;
+            height: 250px;
+            display: none;
+        }
+        
+        .gift-box {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        
+        .gift-box.opened {
+            transform: rotateY(180deg);
+        }
+        
+        .gift-box .front, .gift-box .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .gift-box .front {
+            background: linear-gradient(45deg, #d32f2f, #b71c1c);
+            transform: translateZ(25px);
+        }
+        
+        .gift-box .front::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(45deg, #ff5252, #d32f2f);
+            top: 0;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .gift-box .front::after {
+            content: '🎁';
+            font-size: 100px;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+        
+        .gift-box .front .ribbon {
+            position: absolute;
+            width: 50px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            left: calc(50% - 25px);
+            top: 0;
+        }
+        
+        .gift-box .back {
+            background: linear-gradient(45deg, #2c3e50, #4a6491);
+            transform: rotateY(180deg) translateZ(25px);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .gift-box .back .inner-content {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .gift-box .back .inner-content .message {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        
+        .gift-box .back .inner-content .open-instruction {
+            font-size: 14px;
+            color: #ffd700;
+            font-style: italic;
+        }
+        
+        .photo-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
+        
+        .flying-photo {
+            position: absolute;
+            width: 120px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 3px solid white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            opacity: 0;
+            z-index: 20;
+        }
+        
+        .message-container {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 18px;
+            color: #fff;
+            max-width: 90%;
+            margin: 20px auto;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: none;
+            position: relative;
+            z-index: 15;
+        }
+        
+        .counter {
+            color: #fff;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 18px;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            position: relative;
+            z-index: 15;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            letter-spacing: 2px;
+            font-weight: 700;
+            position: relative;
+            z-index: 15;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            opacity: 0.9;
+            position: relative;
+            z-index: 15;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0;
+            color: #ff4081;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        
+        .thank-you-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 200;
+            padding: 20px;
+            display: none;
+            text-align: center;
+        }
+        
+        .thank-you-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 90%;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .thank-you-title {
+            font-size: 2.8rem;
+            color: #ffd700;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+        
+        .thank-you-message {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+        
+        .signature {
+            font-size: 1.8rem;
+            font-style: italic;
+            color: #ff4081;
+            margin-top: 20px;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(45deg, #ff8a00, #ff0080);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            margin-top: 20px;
+        }
+        
+        .restart-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        @keyframes fly-out {
+            0% {
+                transform: scale(0.5) translate(0, 0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) translate(var(--tx), var(--ty));
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .countdown-title {
+                font-size: 1.8rem;
+            }
+            
+            .countdown-text {
+                font-size: 5rem;
+            }
+            
+            .gift-container {
+                width: 220px;
+                height: 220px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .flying-photo {
+                width: 100px;
+                height: 150px;
+            }
+            
+            .thank-you-title {
+                font-size: 2.2rem;
+            }
+            
+            .thank-you-message {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">3 Months Together ❤️</h1>
+        <p class="subtitle">A special celebration of our journey together</p>
+        
+        <div class="countdown-container" id="countdownContainer">
+            <h2 class="countdown-title">Your Surprise is Ready!</h2>
+            <div class="countdown-text" id="countdownText">10</div>
+            <p class="countdown-subtitle">Click the gift box when the countdown ends</p>
+        </div>
+        
+        <div class="gift-container" id="giftContainer">
+            <div class="gift-box" id="giftBox">
+                <div class="front">
+                    <div class="ribbon"></div>
+                </div>
+                <div class="back" id="giftBack">
+                    <div class="inner-content">
+                        <div class="message">For My Special Friend</div>
+                        <div class="open-instruction">Click to reveal our memories</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="message-container" id="messageContainer"></div>
+        
+        <div class="counter" id="counter">Set 1/8</div>
+    </div>
+    
+    <div class="photo-container" id="photoContainer"></div>
+    <div id="confetti-container"></div>
+    <div id="hearts-container"></div>
+    
+    <div class="thank-you-container" id="thankYouContainer">
+        <div class="thank-you-content">
+            <h2 class="thank-you-title">Thank You ❤️</h2>
+            <div class="thank-you-message">
+                <p>Thank you for coming into my life and making me feel like I matter to someone.</p>
+                <p>You've shown me that I'm important to you, and that means everything to me.</p>
+                <p>I'm sorry for all the times I made you cry, got angry, or upset you. Please forgive me, my dear chudel.</p>
+                <p>Thank you for everything - for the laughter, the love, and for being you.</p>
+            </div>
+            <div class="signature">- Your Loving Partner</div>
+            <button class="restart-btn" id="restartBtn">Relive Our Memories <i class="fas fa-redo"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const countdownContainer = document.getElementById('countdownContainer');
+        const countdownText = document.getElementById('countdownText');
+        const giftContainer = document.getElementById('giftContainer');
+        const giftBox = document.getElementById('giftBox');
+        const messageContainer = document.getElementById('messageContainer');
+        const counter = document.getElementById('counter');
+        const confettiContainer = document.getElementById('confetti-container');
+        const heartsContainer = document.getElementById('hearts-container');
+        const photoContainer = document.getElementById('photoContainer');
+        const thankYouContainer = document.getElementById('thankYouContainer');
+        const restartBtn = document.getElementById('restartBtn');
+        
+        // Messages for each set
+        const messages = [
+            "Every moment with you is special...",
+            "3 months of wonderful memories!",
+            "You make my days brighter!",
+            "Thank you for being you ❤️",
+            "So many adventures together!",
+            "Your smile is my favorite thing",
+            "Can't wait for more memories",
+            "You're amazing in every way"
+        ];
+        
+        // Image paths
+        const imagePaths = Array.from({length: 32}, (_, i) => `images/i${i+1}.jpg`);
+        
+        let currentSet = 0;
+        const totalSets = 8;
+        let count = 10;
+        let countdownInterval;
+        let setsShown = 0;
+        
+        // Start countdown
+        function startCountdown() {
+            countdownInterval = setInterval(() => {
+                countdownText.textContent = count;
+                count--;
+                
+                if (count < 0) {
+                    clearInterval(countdownInterval);
+                    countdownContainer.style.opacity = '0';
+                    setTimeout(() => {
+                        countdownContainer.style.display = 'none';
+                        giftContainer.style.display = 'block';
+                        createHearts();
+                    }, 500);
+                }
+            }, 1000);
+        }
+        
+        // Create floating hearts
+        function createHearts() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('floating-hearts');
+                    heart.innerHTML = '❤️';
+                    heart.style.left = `${Math.random() * 100}%`;
+                    heart.style.fontSize = `${Math.random() * 20 + 15}px`;
+                    heart.style.animation = `float ${Math.random() * 6 + 4}s linear forwards`;
+                    heartsContainer.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 5000);
+                }, i * 300);
+            }
+        }
+        
+        // Create confetti effect
+        function createConfetti() {
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.width = `${Math.random() * 10 + 5}px`;
+                confetti.style.height = `${Math.random() * 10 + 5}px`;
+                confetti.style.animation = `confetti ${Math.random() * 3 + 2}s linear forwards`;
+                confettiContainer.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+        
+        // Fly photos to corners
+        function flyPhotosToCorners() {
+            // Clear any existing photos
+            photoContainer.innerHTML = '';
+            
+            // Calculate which images to show
+            const startImg = currentSet * 4;
+            
+            // Define positions for each corner
+            const positions = [
+                { x: -40, y: -40 }, // Top-left
+                { x: 40, y: -40 },  // Top-right
+                { x: -40, y: 40 },  // Bottom-left
+                { x: 40, y: 40 }    // Bottom-right
+            ];
+            
+            // Create and animate photos
+            for (let i = 0; i < 4; i++) {
+                const img = document.createElement('img');
+                img.classList.add('flying-photo');
+                
+                // Use your actual image paths here
+                img.src = imagePaths[(startImg + i) % imagePaths.length];
+                
+                // Set custom properties for animation
+                img.style.setProperty('--tx', `${positions[i].x}vw`);
+                img.style.setProperty('--ty', `${positions[i].y}vh`);
+                
+                // Position at center initially
+                img.style.top = '50%';
+                img.style.left = '50%';
+                img.style.transform = 'translate(-50%, -50%) scale(0.5)';
+                
+                photoContainer.appendChild(img);
+                
+                // Animate after a small delay
+                setTimeout(() => {
+                    img.style.opacity = '1';
+                    img.style.animation = `fly-out 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards`;
+                }, i * 150);
+            }
+        }
+        
+        // Update gift box content
+        function updateGift() {
+            // Update message
+            messageContainer.textContent = messages[currentSet];
+            messageContainer.style.display = 'block';
+            
+            // Update counter
+            counter.textContent = `Set ${currentSet + 1}/${totalSets}`;
+            
+            // Fly photos to corners
+            flyPhotosToCorners();
+            
+            // Close the box when changing sets
+            giftBox.classList.remove('opened');
+            
+            // Count sets shown
+            setsShown++;
+            
+            // If all sets have been shown, show thank you message
+            if (setsShown >= totalSets) {
+                setTimeout(() => {
+                    thankYouContainer.style.display = 'flex';
+                    thankYouContainer.style.animation = 'fadeInScale 1s forwards';
+                    createConfetti();
+                }, 2000);
+            } else {
+                // Advance to next set for next click
+                currentSet = (currentSet + 1) % totalSets;
+            }
+        }
+        
+        // Restart the experience
+        function restartExperience() {
+            currentSet = 0;
+            setsShown = 0;
+            thankYouContainer.style.display = 'none';
+            giftBox.classList.remove('opened');
+            messageContainer.style.display = 'none';
+            photoContainer.innerHTML = '';
+            counter.textContent = `Set 1/8`;
+        }
+        
+        // Event listeners
+        giftBox.addEventListener('click', function() {
+            if (!this.classList.contains('opened') && setsShown < totalSets) {
+                createConfetti();
+                updateGift();
+            }
+            this.classList.toggle('opened');
+        });
+        
+        restartBtn.addEventListener('click', restartExperience);
+        
+        // Initialize
+        startCountdown();
+        
+        // Handle orientation change for mobile
+        window.addEventListener('orientationchange', function() {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
