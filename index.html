@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,7 +58,9 @@
             opacity: 0;
             z-index: 20;
             transform: translate(-50%, -50%) scale(1);
+            transition: transform 0.25s ease;
         }
+        .flying-photo:hover { transform: translate(-50%, -50%) scale(1.05); }
 
         .thank-you-container { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; flex-direction:column; z-index:200; padding:20px; display:none; text-align:center; }
         .thank-you-content { background: rgba(255,255,255,0.1); padding:40px; border-radius:20px; max-width:90%; backdrop-filter: blur(10px); border:1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
@@ -79,7 +82,7 @@
         @keyframes fly-out {
             0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0; }
             20% { opacity: 1; }
-            100% { transform: translate(calc(var(--tx)), calc(var(--ty))) scale(1); opacity: 1; }
+            100% { transform: translate(calc(var(--tx)), calc(var(--ty))) scale(var(--scale,1)); opacity: 1; }
         }
         @keyframes fadeInScale { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
 
@@ -225,38 +228,40 @@
             }
         }
 
-        // Fly photos to corners (adjusted to avoid filling small screens)
+        // Fly photos to corners (adjusted to be medium-close)
         function flyPhotosToCorners() {
             photoContainer.innerHTML = '';
 
             const startImg = currentSet * 4;
 
-            // SYMMETRIC offsets so left and right photos are equally distant from the gift box
+            // REDUCED offsets so photos land closer to the gift (medium-close)
             const positions = [
-                { x: '-25vw', y: '-28vh' }, // Top-left
-                { x: '25vw',  y: '-28vh' }, // Top-right
-                { x: '-25vw', y: '28vh' },  // Bottom-left
-                { x: '25vw',  y: '28vh' }   // Bottom-right
+                { x: '-18vw', y: '-22vh' }, // Top-left (closer)
+                { x: '18vw',  y: '-22vh' }, // Top-right
+                { x: '-18vw', y: '22vh' },  // Bottom-left
+                { x: '18vw',  y: '22vh' }   // Bottom-right
             ];
+
+            // Slightly larger target scale for a more present look
+            const scales = [1.02, 1.02, 1.02, 1.02];
 
             for (let i = 0; i < 4; i++) {
                 const img = document.createElement('img');
                 img.classList.add('flying-photo');
                 img.src = imagePaths[(startImg + i) % imagePaths.length];
-                // set CSS variables used by animation; use calc() compatible values
                 img.style.setProperty('--tx', positions[i].x);
                 img.style.setProperty('--ty', positions[i].y);
-
+                img.style.setProperty('--scale', scales[i]);
                 img.style.top = '50%';
                 img.style.left = '50%';
-                img.style.transform = 'translate(-50%, -50%) scale(1)';
+                img.style.transform = 'translate(-50%, -50%) scale(0.98)';
                 photoContainer.appendChild(img);
 
-                // small stagger and animation
+                // small stagger and animation (faster, snappier)
                 setTimeout(() => {
                     img.style.opacity = '1';
-                    img.style.animation = `fly-out 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) forwards`;
-                }, i * 140);
+                    img.style.animation = `fly-out 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) forwards`;
+                }, i * 120);
             }
         }
 
